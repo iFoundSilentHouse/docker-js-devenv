@@ -15,21 +15,19 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  show-vscode-versions:
-    runs-on: ubuntu-22.04
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: show available vscode versions
-        run: bash ./show-vscode-versions.bash
-
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+      steps:
+        - uses: jirutka/setup-alpine@v1
+        with:
+          branch: v3.15
+        - name: build the container
+          working-directory: ./docker
+          run: docker build -t vscode .
 
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: build the container
-        working-directory: ./docker
-        run: docker build -t vscode .
+  run-script:
+    runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - name: test script
+          run: ./run.sh --rebuild
